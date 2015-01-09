@@ -64,6 +64,8 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
   private final Map<MetaClass, Boolean> ASSIGNABLE_CACHE = new HashMap<MetaClass, Boolean>();
   private MetaMethod[] staticMethodCache;
 
+  private String _toString = null;
+  
   protected AbstractMetaClass(final T enclosedMetaObject) {
     this.enclosedMetaObject = enclosedMetaObject;
   }
@@ -783,6 +785,8 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
 
   @Override
   public String toString() {
-    return getFullyQualifiedNameWithTypeParms();
+	  if( _toString == null ) 
+		  _toString = getFullyQualifiedNameWithTypeParms();
+	  return _toString;
   }
 }
