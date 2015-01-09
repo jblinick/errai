@@ -26,7 +26,10 @@ import java.util.List;
 import org.jboss.errai.codegen.util.GenUtil;
 
 public abstract class MetaMethod extends AbstractHasAnnotations implements MetaClassMember, MetaGenericDeclaration {
-  @Override
+
+	private String _ToString = null;
+	
+	@Override
   public abstract String getName();
 
   /**
@@ -117,17 +120,23 @@ public abstract class MetaMethod extends AbstractHasAnnotations implements MetaC
   
   @Override
   public String toString() {
-    StringBuilder sb = new StringBuilder();
-    Annotation[] annos = getAnnotations();
-    if (annos != null) {
-      for (Annotation anno : annos) {
-        sb.append(anno.toString()).append(" ");
-      }
-    }
-    sb.append(" ").append(GenUtil.scopeOf(this).getCanonicalName()).append(" ")
-    .append(getReturnType()).append(" ")
-    .append(getName()).append("(").append(Arrays.toString(getParameters())).append(")");
-    
-    return sb.toString();
+	  
+	  if( _ToString == null ) {
+	    StringBuilder sb = new StringBuilder();
+	    Annotation[] annos = getAnnotations();
+	    if (annos != null) {
+	      for (Annotation anno : annos) {
+	        sb.append(anno.toString()).append(" ");
+	      }
+	    }
+	    sb.append(" ").append(GenUtil.scopeOf(this).getCanonicalName()).append(" ")
+	    .append(getReturnType()).append(" ")
+	    .append(getName()).append("(").append(Arrays.toString(getParameters())).append(")");
+	    
+	    
+	    _ToString = sb.toString();
+	  }
+	  
+	  return _ToString;
   }
 }
