@@ -60,6 +60,14 @@ public class JavaReflectionMethod extends MetaMethod {
       final List<MetaParameter> parmList = new ArrayList<MetaParameter>();
 
       final Class<?>[] parmTypes = method.getParameterTypes();
+      
+      // if there are no parameters, no need to go any further
+      // saves calls to getGenericParameterTypes, getParameterAnnotations
+      if( parmTypes.length == 0 ) {
+    	  parameters = new MetaParameter[0];
+    	  return parameters;
+      }
+      
       final Type[] genParmTypes = method.getGenericParameterTypes();
       final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
 
