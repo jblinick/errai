@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-  xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.jboss.errai.demos</groupId>
   <artifactId>errai-jpa-demo-todo-list</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.0</version>
   <packaging>war</packaging>
   <name>Errai::JPA::Demos::ToDoList</name>
   <description>A GWT framework.</description>
@@ -45,6 +43,7 @@
     <connection>scm:git:git@github.com:errai/errai.git</connection>
     <developerConnection>scm:git:git@github.com:errai/errai.git</developerConnection>
     <url>scm:git:git@github.com:errai/errai.git</url>
+    <tag>errai-parent-3.2.0</tag>
   </scm>
   <properties>
     <errai.dev.context>${project.artifactId}</errai.dev.context>
@@ -60,9 +59,9 @@
     <skipTests>true</skipTests>
     <maven.deploy.plugin.version>2.7</maven.deploy.plugin.version>
     <maven.compiler.source>1.6</maven.compiler.source>
-    <argLine></argLine>
+    <argLine />
     <!-- Set this property to the full path to your Wildfly installation to run DevMode -->
-    <errai.jboss.home></errai.jboss.home>
+    <errai.jboss.home />
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -225,7 +224,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

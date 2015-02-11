@@ -470,14 +470,14 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
 
     final MetaClass sup;
 
-    if (MetaClassFactory.get(Object.class).equals(this)) {
-      assignable = true;
-    }
-    else if (this.getFullyQualifiedName().equals(clazz.getFullyQualifiedName())) {
+    if (this.getFullyQualifiedName().equals(clazz.getFullyQualifiedName())) {
       assignable = true;
     }
     else if (_hasInterface(clazz.getInterfaces(), this.getErased())) {
       assignable = true;
+    }
+    else if (MetaClassFactory.get(Object.class).equals(this)) {
+        assignable = true;
     }
     else
       assignable = (sup = clazz.getSuperClass()) != null && isAssignableFrom(sup);
@@ -763,6 +763,8 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
   }
   
   private String _hashString;
+  private Integer hashCode;
+  
   public String hashString() {
     if (_hashString == null) {
       _hashString = MetaClass.class.getName().concat(":").concat(getFullyQualifiedName());
@@ -775,7 +777,9 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
   
   @Override
   public int hashCode() {
-    return hashString().hashCode();
+	  if( hashCode == null )
+		  hashCode = hashString().hashCode();
+	  return hashCode;
   }
 
   @Override

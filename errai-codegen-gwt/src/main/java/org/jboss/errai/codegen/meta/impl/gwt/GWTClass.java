@@ -19,11 +19,18 @@ package org.jboss.errai.codegen.meta.impl.gwt;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
+import javax.annotation.RegEx;
+
+import org.apache.commons.lang3.StringUtils;
 import org.jboss.errai.codegen.DefModifiers;
 import org.jboss.errai.codegen.Parameter;
 import org.jboss.errai.codegen.builder.impl.Scope;
@@ -61,7 +68,12 @@ public class GWTClass extends AbstractMetaClass<JType> {
   protected final Annotation[] annotations;
   protected TypeOracle oracle;
   private String fqcn;
-
+  
+  MetaClass[] _interfaces = null;
+  MetaClass _superClass = null;
+  
+  static Pattern p1 = Pattern.compile("/");
+  
   static {
     GenUtil.addClassAlias(GWTClass.class);
     PrivateAccessUtil.registerPrivateMemberAccessor("jsni", new GWTPrivateMemberAccessor());
@@ -78,12 +90,14 @@ public class GWTClass extends AbstractMetaClass<JType> {
     else {
       annotations = new Annotation[0];
     }
-
+/*
+ * can this be deferred?
+ * 
     if (classType.getQualifiedSourceName().contains(" ")
             || classType.getQualifiedSourceName().contains("?")) {
       throw new IllegalArgumentException("Cannot represent \"" + classType + "\" as a class. Try a different meta type such as GWTWildcardType or GWTTypeVaraible.");
     }
-
+*/
     final JParameterizedType parameterizedType = classType.isParameterized();
     if (!erased) {
       if (parameterizedType != null) {
@@ -92,8 +106,26 @@ public class GWTClass extends AbstractMetaClass<JType> {
     }
   }
 
-  public static MetaClass newInstance(final TypeOracle oracle, final JType type) {
-    return newUncachedInstance(oracle, type);
+  static volatile HashMap<String, MetaClass> cache = new HashMap<String, MetaClass>();
+  static volatile ConcurrentHashMap<TypeOracle,Map<JType,MetaClass>> cache2 = new ConcurrentHashMap<TypeOracle, Map<JType,MetaClass>>();
+  
+  public synchronized static MetaClass newInstance(final TypeOracle oracle, final JType type) {
+
+	if( !cache2.containsKey(oracle) ) {
+		cache2.put(oracle, new HashMap<JType,MetaClass>());
+	}
+	if( cache2.get(oracle).containsKey(type) ) {
+//		System.out.println("Found in Cache: " + type.getQualifiedSourceName() );
+		return cache2.get(oracle).get(type);
+//	String k = oracle.toString() + "-" + type.toString();
+//	if( cache.containsKey(k)) {
+//		System.out.println("Loaded " + type.getQualifiedSourceName() + " From Cache");
+//		return cache.get(k);
+	}
+	MetaClass mc = newUncachedInstance(oracle, type);
+//	cache.put(k, mc);
+	cache2.get(oracle).put(type, mc);
+	return mc;
   }
 
   public static MetaClass newInstance(final TypeOracle oracle, final String type) {
@@ -182,7 +214,9 @@ public class GWTClass extends AbstractMetaClass<JType> {
         fqcn = getInternalName();
       }
       else {
-        fqcn = getInternalName().replace('/', '.');
+//    	  fqcn = StringUtils.replaceChars( getInternalName(), '/', '.');
+    	  fqcn = p1.matcher(getInternalName()).replaceAll(".");
+//        fqcn = getInternalName().replace('/', '.');
       }
     }
     else {
@@ -287,7 +321,9 @@ public class GWTClass extends AbstractMetaClass<JType> {
       return this;
     }
     else {
-      return new GWTClass(oracle, getEnclosedMetaObject().getErasedType(), true);
+    	// not sure what Erased flag is for 
+//        return new GWTClass(oracle, getEnclosedMetaObject().getErasedType(), true);
+        return GWTClass.newInstance(oracle, getEnclosedMetaObject().getErasedType());
     }
   }
 
@@ -406,17 +442,20 @@ public class GWTClass extends AbstractMetaClass<JType> {
 
   @Override
   public MetaClass[] getInterfaces() {
-    final JClassType jClassType = getEnclosedMetaObject().isClassOrInterface();
-    if (jClassType == null)
-      return new MetaClass[0];
-
-    final List<MetaClass> metaClassList = new ArrayList<MetaClass>();
-    for (final JClassType type : jClassType.getImplementedInterfaces()) {
-
-      metaClassList.add(new GWTClass(oracle, type, false));
-    }
-
-    return metaClassList.toArray(new MetaClass[metaClassList.size()]);
+	  
+	if( _interfaces == null ) {
+	    final JClassType jClassType = getEnclosedMetaObject().isClassOrInterface();
+	    if (jClassType == null)
+	      return new MetaClass[0];
+	
+	    final List<MetaClass> metaClassList = new ArrayList<MetaClass>();
+	    for (final JClassType type : jClassType.getImplementedInterfaces()) {
+	      metaClassList.add(GWTClass.newInstance(oracle, type));
+	    }
+	
+	    _interfaces = metaClassList.toArray(new MetaClass[metaClassList.size()]);
+	}
+	return _interfaces;
   }
 
   @Override
@@ -426,18 +465,22 @@ public class GWTClass extends AbstractMetaClass<JType> {
 
   @Override
   public MetaClass getSuperClass() {
-    JClassType type = getEnclosedMetaObject().isClassOrInterface();
-    if (type == null) {
-      return null;
-    }
-
-    type = type.getSuperclass();
-
-    if (type == null) {
-      return null;
-    }
-
-    return newUncachedInstance(oracle, type);
+	  
+	  if( _superClass == null ) {
+	    JClassType type = getEnclosedMetaObject().isClassOrInterface();
+	    if (type == null) {
+	      return null;
+	    }
+	
+	    type = type.getSuperclass();
+	
+	    if (type == null) {
+	      return null;
+	    }
+	
+	    _superClass = newInstance(oracle, type);
+	  }
+	  return _superClass;
   }
 
   @Override
@@ -446,7 +489,7 @@ public class GWTClass extends AbstractMetaClass<JType> {
     if (type == null) {
       return null;
     }
-    return newUncachedInstance(oracle, type.getComponentType());
+    return newInstance(oracle, type.getComponentType());
   }
 
   @Override

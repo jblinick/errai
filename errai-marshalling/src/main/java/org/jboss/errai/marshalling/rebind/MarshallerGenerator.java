@@ -57,7 +57,8 @@ public class MarshallerGenerator extends IncrementalGenerator {
   
   // We're keeping this cache of portable types to compare their contents and
   // find out if they have changed since the last refresh.
-  private static Map<String, MetaClass> cachedPortableTypes = new ConcurrentHashMap<String, MetaClass>();
+  // NOTE: Changed to public so the MarshallerGeneratorFactoroy can find out if its changed
+  public static Map<String, MetaClass> cachedPortableTypes = new ConcurrentHashMap<String, MetaClass>();
   
   /*
    * A version id. Increment this as needed, when structural changes are made to
@@ -92,6 +93,14 @@ public class MarshallerGenerator extends IncrementalGenerator {
       return new RebindResult(RebindMode.USE_ALL_NEW, marshallerTypeName);
     }
   }
+  
+  static public boolean isMetaClassChanged( MetaClass type ) { 
+	  
+	  final MetaClass cachedType = cachedPortableTypes.get(type.getFullyQualifiedName());
+	  if (cachedType != null && cachedType.hashContent() == type.hashContent() != type.isArray()) 
+		   return true;
+	  return false;	 
+  }
 
   private void generateMarshaller(final GeneratorContext context, final MetaClass type, final String className,
           final String marshallerTypeName, final TreeLogger logger, final PrintWriter printWriter) {
@@ -112,9 +121,13 @@ public class MarshallerGenerator extends IncrementalGenerator {
     }
     printWriter.append(gen);
 
+    long s = System.currentTimeMillis();
+    
     final File tmpFile = new File(RebindUtils.getErraiCacheDir().getAbsolutePath() + "/" + className + ".java");
     RebindUtils.writeStringToFile(tmpFile, gen);
-    
+
+    long s2 = System.currentTimeMillis();
+    System.out.println("Wrote file in " + (s2-s) + "ms" );
     context.commit(logger, printWriter);
   }
 

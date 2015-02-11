@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
@@ -277,25 +278,48 @@ public final class ClassScanner {
   }
 
   private static Set<String> reloadablePackages = null;
-
+  private static Set<String> allReloadablePackages = new HashSet<String>();
+  private static ConcurrentHashMap<GeneratorContext,ArrayList<MetaClass>> cachedClasses = new ConcurrentHashMap<GeneratorContext,ArrayList<MetaClass>>();
+  
   private static Collection<MetaClass> getAllReloadableCachedClasses(final GeneratorContext context) {
-    if (reloadablePackages == null) {
-      reloadablePackages = RebindUtils.getReloadablePackageNames(context);
-    }
 
-    Collection<MetaClass> clazzes = new ArrayList<MetaClass>();
-    for (MetaClass clazz : MetaClassFactory.getAllCachedClasses()) {
-      for (String reloadablePackage : reloadablePackages) {
-        if (clazz.getFullyQualifiedName().startsWith(reloadablePackage)) {
-          clazzes.add(clazz);
-        }
-      }
-    }
-    return clazzes;
+		
+		if (reloadablePackages == null) {
+		      reloadablePackages = RebindUtils.getReloadablePackageNames(context);
+		}
+			
+			if( cachedClasses.containsKey( context ) )
+				return cachedClasses.get( context );
+		    
+//			System.out.println("GettingAllReloadableCachedClasses");  
+			
+			ArrayList<MetaClass> clazzes = new ArrayList<MetaClass>();
+		    for (MetaClass clazz : MetaClassFactory.getAllCachedClasses()) {
+		  	  String packageName = clazz.getPackageName();
+		  	  
+		  	  // see if we have encountered this EXACT package before
+		  	  if( allReloadablePackages.contains(packageName) )
+		  		  clazzes.add(clazz);
+		  	  else {
+		    	for (String reloadablePackage : reloadablePackages) {
+			        if (clazz.getFullyQualifiedName().startsWith(reloadablePackage)) {
+			        	allReloadablePackages.add(clazz.getPackageName());
+			        	clazzes.add(clazz);
+			        }
+		    	}
+		      }
+		    }
+		    
+//		    cachedClasses.put(context, clazzes);
+		    return clazzes;	
   }
 
   private static boolean isReloadable(Class<?> clazz) {
-    for (String reloadablePackage : reloadablePackages) {
+
+  	  if( allReloadablePackages.contains(clazz.getPackage().getName()) )
+  		  return true;
+  	  
+  	  for (String reloadablePackage : reloadablePackages) {
       if (clazz.getName().startsWith(reloadablePackage)) {
         return true;
       }

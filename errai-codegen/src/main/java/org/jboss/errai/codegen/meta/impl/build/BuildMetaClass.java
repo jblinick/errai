@@ -707,7 +707,10 @@ public class BuildMetaClass extends AbstractMetaClass<Object> implements Builder
       }
     }
 
-    return generatedCache = PrettyPrinter.prettyPrintJava(headerBuffer.toString() + buf.append("}\n").toString());
+    long s1 = System.currentTimeMillis();
+    generatedCache = PrettyPrinter.prettyPrintJava(headerBuffer.toString() + buf.append("}\n").toString());
+   // System.out.println("PrettPrinter Time : " +  getName() + ": " + (System.currentTimeMillis()-s1) + "ms" );
+    return generatedCache;
   }
 
   private List<Builder> diffList(final List<? extends Builder> original,

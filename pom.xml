@@ -5,7 +5,7 @@
   <name>Errai</name>
   <groupId>org.jboss.errai</groupId>
   <artifactId>errai-parent</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.1.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
   <url>http://jboss.org/errai/errai</url>
@@ -53,6 +53,7 @@
     <connection>scm:git:git@github.com:errai/errai.git</connection>
     <developerConnection>scm:git:git@github.com:errai/errai.git</developerConnection>
     <url>scm:git:git@github.com:errai/errai.git</url>
+    <tag>errai-parent-3.2.0</tag>
   </scm>
 
   <organization>
@@ -68,14 +69,14 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <gwt.maven.version>2.6.1</gwt.maven.version>
+    <gwt.maven.version>2.7.0</gwt.maven.version>
     <guice.version>3.0</guice.version>
     <guava.version>17.0</guava.version>
     <appengine.version>1.7.6</appengine.version>
     <validation.api.version>1.0.0.GA</validation.api.version>    
     <mvel.version>2.1.7.Final</mvel.version>
     <weld.version>2.0.5.Final</weld.version>
-    <gwtArgs></gwtArgs>
+    <gwtArgs />
     <argLine>-Dgwt.args="${gwtArgs}"</argLine>
   </properties>
 
@@ -421,7 +422,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -435,7 +436,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -474,7 +475,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -514,7 +515,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>
@@ -543,7 +544,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
               </pluginExecutions>

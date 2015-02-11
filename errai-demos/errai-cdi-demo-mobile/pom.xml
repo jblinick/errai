@@ -5,7 +5,7 @@
   <name>Errai::CDI::Demos::Mobile</name>
   <groupId>org.jboss.errai.demos</groupId>
   <artifactId>errai-cdi-demo-mobile</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.0</version>
   <packaging>war</packaging>
 
   <url>http://jboss.org/errai/errai</url>
@@ -44,6 +44,7 @@
     <connection>scm:git:git@github.com:errai/errai.git</connection>
     <developerConnection>scm:git:git@github.com:errai/errai.git</developerConnection>
     <url>scm:git:git@github.com:errai/errai.git</url>
+    <tag>errai-parent-3.2.0</tag>
   </scm>
 
   <organization>
@@ -55,7 +56,7 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <webDescriptor>jboss7</webDescriptor>
     <skipTests>true</skipTests>
-    <argLine></argLine>
+    <argLine />
     <!-- maven plugins versions -->
     <maven.war.plugin.version>2.1.1</maven.war.plugin.version>
     <maven.surefire.plugin.version>2.5</maven.surefire.plugin.version>
@@ -294,7 +295,7 @@
                     </goals>
                   </pluginExecutionFilter>
                   <action>
-                    <ignore></ignore>
+                    <ignore />
                   </action>
                 </pluginExecution>
                 <pluginExecution>

@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <name>Errai::Bus::Demos::StressTest</name>
   <groupId>org.jboss.errai.demos</groupId>
   <artifactId>errai-bus-demo-stress-test</artifactId>
-  <version>3.2.0-SNAPSHOT</version>
+  <version>3.2.0</version>
   <packaging>war</packaging>
 
   <url>http://jboss.org/errai/errai</url>
@@ -44,6 +43,7 @@
     <connection>scm:git:git@github.com:errai/errai.git</connection>
     <developerConnection>scm:git:git@github.com:errai/errai.git</developerConnection>
     <url>scm:git:git@github.com:errai/errai.git</url>
+    <tag>errai-parent-3.2.0</tag>
   </scm>
 
   <organization>
@@ -135,7 +135,7 @@
           <logLevel>INFO</logLevel>
           <runTarget>App.html</runTarget>
           <extraJvmArgs>-Xmx1g</extraJvmArgs>
-          <jvm></jvm>
+          <jvm />
           <style>DETAILED</style>
           <soyc>false</soyc>
           <hostedWebapp>src/main/webapp/</hostedWebapp>

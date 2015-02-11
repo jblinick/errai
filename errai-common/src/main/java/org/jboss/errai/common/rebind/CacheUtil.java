@@ -28,6 +28,8 @@ import java.util.Map;
 public abstract class CacheUtil {
   private static final Logger log = LoggerFactory.getLogger(CacheUtil.class);
 
+  private static long totalTimeGettingCache = 0;
+  
   private CacheUtil() {
   }
 
@@ -35,9 +37,19 @@ public abstract class CacheUtil {
       = new HashMap<Class<? extends CacheStore>, CacheStore>();
 
   public static <T extends CacheStore> T getCache(final Class<T> type) {
-    synchronized (type) {
+	  
+	  long s = System.currentTimeMillis();
+	  boolean fromCache = true;
+	  
+	  synchronized (type) {
+		  
+		  long tAfterLock = System.currentTimeMillis();
+		  if( (tAfterLock-s) > 5 ) {
+			  log.warn("Time to get Lock for " + type.getName() + ": " + ( tAfterLock-s) + "ms");
+		  }
       T cacheStore = (T) CACHE_STORE_MAP.get(type);
       if (cacheStore == null) {
+    	  fromCache = false;
         try {
           cacheStore = type.newInstance();
           CACHE_STORE_MAP.put(type, cacheStore);
@@ -46,7 +58,18 @@ public abstract class CacheUtil {
           throw new RuntimeException("failed to instantiate new type: " + type.getName(), e);
         }
       }
+      
+      long e = System.currentTimeMillis();
+      long tt = e-s;
+      totalTimeGettingCache += tt;
 
+      if( !fromCache )
+    	  log.warn("Get Cache For " + type.getName() + ": " + (tt) + "ms (Total Time now is " + totalTimeGettingCache + "ms)");
+      
+      if( tt > 20 ) {
+    	  System.out.println("Took too long!");
+      }
+      
       return cacheStore;
     }
   }

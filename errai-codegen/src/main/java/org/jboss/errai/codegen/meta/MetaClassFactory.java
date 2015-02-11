@@ -60,6 +60,9 @@ import org.mvel2.DataConversion;
  * @author Mike Brock <cbrock@redhat.com>
  */
 public final class MetaClassFactory {
+	
+	private static MetaClassCache _cache;
+	
   static {
     DataConversion.addConversionHandler(Class.class, new ConversionHandler() {
       @Override
@@ -111,7 +114,11 @@ public final class MetaClassFactory {
   }
 
   public static MetaClassCache getMetaClassCache() {
-    return CacheUtil.getCache(MetaClassCache.class);
+	  if( _cache != null )
+		  return _cache;
+	  else
+		  _cache = CacheUtil.getCache(MetaClassCache.class);
+	  return _cache;
   }
 
   public static MetaClass get(final String fullyQualifiedClassName, final boolean erased) {
