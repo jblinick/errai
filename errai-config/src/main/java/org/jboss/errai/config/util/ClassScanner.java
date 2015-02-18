@@ -15,6 +15,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
+import org.eclipse.jetty.util.ConcurrentHashSet;
 import org.jboss.errai.codegen.meta.MetaClass;
 import org.jboss.errai.codegen.meta.MetaClassFactory;
 import org.jboss.errai.codegen.meta.MetaField;
@@ -39,7 +40,7 @@ public final class ClassScanner {
     final Map<MetaClass, Collection<MetaClass>> subtypesCache = new ConcurrentHashMap<MetaClass, Collection<MetaClass>>();
     final Collection<MetaClass> reloadableClasses =  new CopyOnWriteArrayList<MetaClass>();
     final Collection<String> reloadableClassNames =  new CopyOnWriteArrayList<String>();
-    final Collection<String> reloadablePackages =  new CopyOnWriteArrayList<String>();
+    final Set<String> reloadablePackages =  new ConcurrentHashSet<String>();
 
     @Override
     public void clear() {
@@ -293,12 +294,26 @@ public final class ClassScanner {
 
     final Collection<MetaClass> classes = new ArrayList<MetaClass>();
     final Collection<String> classNames = new ArrayList<String>();
+    
     for (MetaClass clazz : MetaClassFactory.getAllCachedClasses()) {
+    	
+      final String fqcn = clazz.getFullyQualifiedName();
+
+      // check to see if this exact package has been encountered before
+      // this should be an optimization, as packages will more than likely contain several
+      // classes
+      if( cache.reloadablePackages.contains(clazz.getPackageName())) {
+          classes.add(clazz);
+          classNames.add(fqcn);
+          continue;
+      }
+
       for (String reloadablePackage : cache.reloadablePackages) {
-        final String fqcn = clazz.getFullyQualifiedName();
         if (fqcn.startsWith(reloadablePackage)) {
           classes.add(clazz);
           classNames.add(fqcn);
+          cache.reloadablePackages.add(clazz.getPackageName());
+          continue;
         }
       }
     }
