@@ -81,24 +81,27 @@ public class BlockStatement extends AbstractStatement {
     
     final StringBuilder buf = new StringBuilder(512);
 
-    boolean isLastBlock = false;
+    Statement lastStatement = null;
+    
     for (final Statement statement : statements) {
-      if (buf.length() != 0 && !(statement instanceof EmptyStatement)) {
+    	
+      final boolean isEmptyStatement = statement instanceof EmptyStatement;
+    	
+      if (buf.length() != 0 && !isEmptyStatement) {
         buf.append("\n");
       }
 
       buf.append(statement.generate(context));
 
-      if (!(statement instanceof Comment) && !(statement instanceof EmptyStatement)
-              && !buf.toString().endsWith(";") && !buf.toString().endsWith(":") && !buf.toString().endsWith("}")) {
-
+      Character endsWith = buf.length() == 0 ? 'x' : buf.charAt(buf.length()-1);
+      if (endsWith != ';' && endsWith != '}' && endsWith != ':' && !(statement instanceof Comment) && !isEmptyStatement) {
         buf.append(";");
       }
 
-      isLastBlock = statement instanceof ClosedBlock;
+      lastStatement = statement;
     }
 
-    if (buf.length() != 0 && buf.charAt(buf.length() - 1) != ';' && !isLastBlock) {
+    if (buf.length() != 0 && buf.charAt(buf.length() - 1) != ';' && !( lastStatement != null && lastStatement instanceof ClosedBlock )) {
       buf.append(';');
     }
 
