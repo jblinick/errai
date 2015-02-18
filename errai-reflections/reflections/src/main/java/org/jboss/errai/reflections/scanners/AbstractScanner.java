@@ -1,8 +1,11 @@
 package org.jboss.errai.reflections.scanners;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import com.google.common.collect.Multimap;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Set;
+import java.util.concurrent.ConcurrentSkipListSet;
+
+import javassist.bytecode.ClassFile;
 
 import org.jboss.errai.reflections.Configuration;
 import org.jboss.errai.reflections.ReflectionsException;
@@ -11,8 +14,9 @@ import org.jboss.errai.reflections.scanners.reg.ScannerRegistry;
 import org.jboss.errai.reflections.util.Utils;
 import org.jboss.errai.reflections.vfs.Vfs;
 
-import java.io.IOException;
-import java.io.InputStream;
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
+import com.google.common.collect.Multimap;
 
 @SuppressWarnings({"RawUseOfParameterizedType", "unchecked"})
 public abstract class AbstractScanner implements Scanner {
@@ -20,6 +24,9 @@ public abstract class AbstractScanner implements Scanner {
 	private Configuration configuration;
 	private Multimap<String, String> store;
 	private Predicate<String> resultFilter = Predicates.alwaysTrue(); //accept all by default
+	
+	public static final Set<String> dynamicClasses = new ConcurrentSkipListSet<String>();
+
 	
 	public AbstractScanner() {
 	  /*
@@ -46,6 +53,13 @@ public abstract class AbstractScanner implements Scanner {
         try {
             inputStream = file.openInputStream();
             final Object cls = configuration.getMetadataAdapter().createClassObject(inputStream);
+            ClassFile cf = (ClassFile) cls;
+            String fp = file.getFullPath();
+            
+            if( fp != null && !fp.contains(".jar//") ) {
+            	dynamicClasses.add(fp);
+            }
+            
             scan(cls);
         } catch (IOException e) {
             throw new ReflectionsException("could not create class file from " + file.getName(), e);

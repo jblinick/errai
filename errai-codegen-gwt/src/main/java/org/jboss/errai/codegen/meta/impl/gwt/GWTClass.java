@@ -41,6 +41,7 @@ import org.jboss.errai.codegen.util.GenUtil;
 import org.jboss.errai.codegen.util.PrivateAccessUtil;
 import org.jboss.errai.common.rebind.CacheStore;
 import org.jboss.errai.common.rebind.CacheUtil;
+import org.jboss.errai.reflections.scanners.AbstractScanner;
 
 import com.google.common.collect.Lists;
 import com.google.gwt.core.ext.typeinfo.JArrayType;
@@ -99,14 +100,27 @@ public class GWTClass extends AbstractMetaClass<JType> {
   
   public static class GWTClassCache implements CacheStore {
     private Map<String, MetaClass> cache = new ConcurrentHashMap<String, MetaClass>();
+
+    // the FIXED map will contain MetaClasses that will not change with each refresh.
+    // By caching these MetaClass instances, a lot of time is saved on refresh
+    private Map<String, MetaClass> FIXED = new ConcurrentHashMap<String, MetaClass>();
     
     @Override
     public void clear() {
       cache.clear();
+      
+      // when the cache is cleared, we want to populate it with all of the non-changing classes
+      // so that we don't need to create them again
+      cache.putAll(FIXED);
     }
     
     public void push(String key, MetaClass clazz) {
       cache.put(key, clazz);
+      
+      // if the class being pushed in isn't dynamic, added to the map of non-changing classes
+      if( !AbstractScanner.dynamicClasses.contains(key) ) {
+    	  FIXED.put(key, clazz);
+        }
     }
     
     public MetaClass get(String name) {
