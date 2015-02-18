@@ -217,6 +217,7 @@ public class GWTClass extends AbstractMetaClass<JType> {
     else {
       fqcn = getEnclosedMetaObject().getQualifiedBinaryName();
     }
+    fqcn = fqcn.intern();
     return fqcn;
   }
 
@@ -237,7 +238,7 @@ public class GWTClass extends AbstractMetaClass<JType> {
       return _packageName;
     }
     
-    _packageName = getEnclosedMetaObject().isClassOrInterface().getPackage().getName();
+    _packageName = getEnclosedMetaObject().isClassOrInterface().getPackage().getName().intern();
     return _packageName;
   }
 
