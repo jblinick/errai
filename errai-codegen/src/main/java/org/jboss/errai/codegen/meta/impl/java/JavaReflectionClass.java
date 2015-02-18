@@ -366,13 +366,21 @@ public class JavaReflectionClass extends AbstractMetaClass<Class> {
     return _interfacesCache = metaClassList.toArray(new MetaClass[metaClassList.size()]);
   }
 
+  MetaClass _superClass;
+  
   @Override
   public MetaClass getSuperClass() {
-    if (getGenericSuperClass() != null) {
-      return parameterizedAs(getEnclosedMetaObject().getSuperclass(), typeParametersOf(getGenericSuperClass().getTypeParameters()));
+   
+	  if( _superClass != null )
+		  return _superClass;
+	  
+	  if (getGenericSuperClass() != null) {
+		  _superClass = parameterizedAs(getEnclosedMetaObject().getSuperclass(), typeParametersOf(getGenericSuperClass().getTypeParameters()));
+		  return _superClass;
     }
     else {
-      return newInstance(getEnclosedMetaObject().getSuperclass());
+    	_superClass = newInstance(getEnclosedMetaObject().getSuperclass());
+    	return _superClass;
     }
   }
 
