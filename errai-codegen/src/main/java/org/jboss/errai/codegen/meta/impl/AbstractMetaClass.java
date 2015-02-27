@@ -474,12 +474,16 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
     else if (this.getFullyQualifiedName().equals(clazz.getFullyQualifiedName())) {
       assignable = true;
     }
-    else if (_hasInterface(clazz.getInterfaces(), this.getErased())) {
-      assignable = true;
+    else if( clazz.implementsInterface(this.getErased()) ){
+        assignable = true;    	
     }
-    else
+/*    else if (_hasInterface(clazz.getInterfaces(), this.getErased())) {
+      assignable = true;
+    }*/
+    else {
       assignable = (sup = clazz.getSuperClass()) != null && isAssignableFrom(sup);
-
+    }
+    
     ASSIGNABLE_CACHE.put(clazz, assignable);
     return assignable;
   }
@@ -488,7 +492,12 @@ public abstract class AbstractMetaClass<T> extends MetaClass {
   public boolean isAssignableTo(final MetaClass clazz) {
     return clazz.isAssignableFrom(this);
   }
-
+  
+  @Override
+  public Boolean implementsInterface(MetaClass to) {
+	  return _hasInterface(this.getInterfaces(), to );
+  }
+  
   private static boolean _hasInterface(final MetaClass[] from, final MetaClass to) {
     for (final MetaClass interfaceType : from) {
       if (to.getFullyQualifiedName().equals(interfaceType.getErased().getFullyQualifiedName()))

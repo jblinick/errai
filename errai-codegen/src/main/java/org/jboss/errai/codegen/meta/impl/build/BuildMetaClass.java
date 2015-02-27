@@ -829,31 +829,37 @@ public class BuildMetaClass extends AbstractMetaClass<Object> implements Builder
     return true;
   }
 
+  Integer _hashCode;
+  
   @Override
   public int hashCode() {
-    int result = super.hashCode();
-    result = 31 * result + (context != null ? context.hashCode() : 0);
-    result = 31 * result + (className != null ? className.hashCode() : 0);
-    result = 31 * result + (superClass != null ? superClass.hashCode() : 0);
-    result = 31 * result + (interfaces != null ? interfaces.hashCode() : 0);
-    result = 31 * result + (scope != null ? scope.hashCode() : 0);
-    result = 31 * result + (isArray ? 1 : 0);
-    result = 31 * result + dimensions;
-    result = 31 * result + (isInterface ? 1 : 0);
-    result = 31 * result + (isAbstract ? 1 : 0);
-    result = 31 * result + (isFinal ? 1 : 0);
-    result = 31 * result + (isStatic ? 1 : 0);
-    result = 31 * result + (isInner ? 1 : 0);
-    result = 31 * result + (methods != null ? methods.hashCode() : 0);
-    result = 31 * result + (fields != null ? fields.hashCode() : 0);
-    result = 31 * result + (constructors != null ? constructors.hashCode() : 0);
-    result = 31 * result + (typeVariables != null ? typeVariables.hashCode() : 0);
-    result = 31 * result + (reifiedFormOf != null ? reifiedFormOf.hashCode() : 0);
-    result = 31 * result + (_nameCache != null ? _nameCache.hashCode() : 0);
-    result = 31 * result + (_methodsCache != null ? Arrays.hashCode(_methodsCache) : 0);
-    result = 31 * result + (_fieldsCache != null ? Arrays.hashCode(_fieldsCache) : 0);
-    result = 31 * result + (_constructorsCache != null ? Arrays.hashCode(_constructorsCache) : 0);
-    result = 31 * result + (generatedCache != null ? generatedCache.hashCode() : 0);
-    return result;
+	  
+	if( _hashCode == null ) {
+	    int result = super.hashCode();
+	    result = 31 * result + (context != null ? context.hashCode() : 0);
+	    result = 31 * result + (className != null ? className.hashCode() : 0);
+	    result = 31 * result + (superClass != null ? superClass.hashCode() : 0);
+	    result = 31 * result + (interfaces != null ? interfaces.hashCode() : 0);
+	    result = 31 * result + (scope != null ? scope.hashCode() : 0);
+	    result = 31 * result + (isArray ? 1 : 0);
+	    result = 31 * result + dimensions;
+	    result = 31 * result + (isInterface ? 1 : 0);
+	    result = 31 * result + (isAbstract ? 1 : 0);
+	    result = 31 * result + (isFinal ? 1 : 0);
+	    result = 31 * result + (isStatic ? 1 : 0);
+	    result = 31 * result + (isInner ? 1 : 0);
+	    result = 31 * result + (methods != null ? methods.hashCode() : 0);
+	    result = 31 * result + (fields != null ? fields.hashCode() : 0);
+	    result = 31 * result + (constructors != null ? constructors.hashCode() : 0);
+	    result = 31 * result + (typeVariables != null ? typeVariables.hashCode() : 0);
+	    result = 31 * result + (reifiedFormOf != null ? reifiedFormOf.hashCode() : 0);
+	    result = 31 * result + (_nameCache != null ? _nameCache.hashCode() : 0);
+	    result = 31 * result + (_methodsCache != null ? Arrays.hashCode(_methodsCache) : 0);
+	    result = 31 * result + (_fieldsCache != null ? Arrays.hashCode(_fieldsCache) : 0);
+	    result = 31 * result + (_constructorsCache != null ? Arrays.hashCode(_constructorsCache) : 0);
+	    result = 31 * result + (generatedCache != null ? generatedCache.hashCode() : 0);
+	    _hashCode = result;
+	}
+	return _hashCode;
   }
 }

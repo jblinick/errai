@@ -245,4 +245,6 @@ public abstract class MetaClass extends AbstractHasAnnotations implements MetaTy
   
   public abstract int hashContent();
 
+  public abstract Boolean implementsInterface(MetaClass to);
+
 }

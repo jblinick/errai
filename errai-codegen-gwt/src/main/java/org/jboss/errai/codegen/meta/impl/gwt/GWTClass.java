@@ -71,7 +71,7 @@ public class GWTClass extends AbstractMetaClass<JType> {
     GenUtil.addClassAlias(GWTClass.class);
     PrivateAccessUtil.registerPrivateMemberAccessor("jsni", new GWTPrivateMemberAccessor());
   }
-
+  
   protected GWTClass(final TypeOracle oracle, final JType classType, final boolean erased) {
     super(classType);
     this.oracle = oracle;
@@ -138,6 +138,7 @@ public class GWTClass extends AbstractMetaClass<JType> {
     }
     
     return clazz;
+    
   }
 
   public static MetaClass newInstance(final TypeOracle oracle, final String type) {
@@ -463,7 +464,17 @@ public class GWTClass extends AbstractMetaClass<JType> {
   }
 
   private MetaClass[] _intefacesCache = null;
-  
+  private HashSet<String> _interfacesSet = new HashSet<String>();
+
+  @Override
+  public Boolean implementsInterface( MetaClass to ) {
+	  getInterfaces();
+	  if( _interfacesSet.contains(to.getFullyQualifiedName()))
+		  return true;
+	  else
+		  return false;
+  }
+
   @Override
   public MetaClass[] getInterfaces() {
     if (_intefacesCache != null) {
@@ -476,8 +487,10 @@ public class GWTClass extends AbstractMetaClass<JType> {
 
     final List<MetaClass> metaClassList = new ArrayList<MetaClass>();
     for (final JClassType type : jClassType.getImplementedInterfaces()) {
-
-      metaClassList.add(new GWTClass(oracle, type, false));
+    	MetaClass c = GWTClass.newInstance(oracle, type);
+    	_interfacesSet.add(c.getFullyQualifiedName());
+        metaClassList.add(c);
+//        metaClassList.add(new GWTClass(oracle, type, false));
     }
 
     _intefacesCache = metaClassList.toArray(new MetaClass[metaClassList.size()]);

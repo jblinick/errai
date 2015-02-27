@@ -15,13 +15,16 @@ import java.util.TreeSet;
  * @author Mike Brock
  */
 public class ExtendedTypeAnnotationScanner extends TypeAnnotationsScanner {
-  @Override
-  public void scan(final Object cls) {
+
+   static final MetaDataScanner.CacheHolder cache = CacheUtil.getCache(MetaDataScanner.CacheHolder.class);
+
+	@Override
+	public void scan(final Object cls) {
     @SuppressWarnings("unchecked") final
     MetadataAdapter adapter = getMetadataAdapter();
 
     final String className = adapter.getClassName(cls);
-
+    
     // noinspection unchecked
     for (final String annotationType : (List<String>) adapter.getClassAnnotationNames(cls)) {
       if (acceptResult(annotationType) ||
@@ -30,9 +33,9 @@ public class ExtendedTypeAnnotationScanner extends TypeAnnotationsScanner {
         getStore().put(annotationType, className);
 
         if (cls instanceof ClassFile) {
-          Set<SortableClassFileWrapper> classes = CacheUtil.getCache(MetaDataScanner.CacheHolder.class).ANNOTATIONS_TO_CLASS.get(annotationType);
+          Set<SortableClassFileWrapper> classes = cache.ANNOTATIONS_TO_CLASS.get(annotationType);
           if (classes == null) {
-            CacheUtil.getCache(MetaDataScanner.CacheHolder.class).ANNOTATIONS_TO_CLASS.put(annotationType, classes =
+        	  cache.ANNOTATIONS_TO_CLASS.put(annotationType, classes =
                 Collections.synchronizedSet(new TreeSet<SortableClassFileWrapper>()));
           }
           classes.add(new SortableClassFileWrapper(className, (ClassFile) cls));

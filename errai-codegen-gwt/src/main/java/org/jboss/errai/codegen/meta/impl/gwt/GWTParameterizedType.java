@@ -37,10 +37,16 @@ public class GWTParameterizedType extends AbstractMetaParameterizedType {
     this.parameterizedType = parameterizedType;
     this.oracle = oracle;
   }
+  
+  private MetaType[] _types = null;
 
   @Override
   public MetaType[] getTypeParameters() {
-    final List<MetaType> types = new ArrayList<MetaType>();
+
+	if( _types != null )
+		return _types;
+	
+	  final List<MetaType> types = new ArrayList<MetaType>();
     for (final JClassType parm : parameterizedType.getTypeArgs()) {
       if (parm.isWildcard() != null) {
         types.add(new GWTWildcardType(oracle, parm.isWildcard()));
@@ -60,7 +66,8 @@ public class GWTParameterizedType extends AbstractMetaParameterizedType {
         throw new IllegalArgumentException("Unsupported kind of type parameter " + parm + " in type " + parameterizedType.getName());
       }
     }
-    return types.toArray(new MetaType[types.size()]);
+    _types = types.toArray(new MetaType[types.size()]);
+    return _types;
   }
 
   @Override
